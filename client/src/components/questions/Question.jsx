@@ -19,7 +19,8 @@ const Question = ({question, product_id, productName}) => {
     return axios({
       method: 'put',
       url: urlString,
-      responseType: 'json'
+      responseType: 'json',
+      data: {question_id: question.question_id}
     });
   };
 

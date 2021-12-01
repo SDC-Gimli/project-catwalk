@@ -10,11 +10,12 @@ const Answer = ({answer}) => {
 
   //#region helpful answer vote functions
   const voteHelpful = function() {
-    var urlString = '/api/qa/answers/' + answer.id + '/helpful';
+    var urlString = '/api/qa/answers/' + answer.answer_id + '/helpful';
     return axios({
       method: 'put',
       url: urlString,
-      responseType: 'json'
+      responseType: 'json',
+      data: {answer_id: answer.answer_id}
     });
   };
 

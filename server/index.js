@@ -7,23 +7,31 @@ const key = require(path.join(__dirname, '../auth.js'));
 // console.log(__dirname);
 // console.log(path.join(__dirname, '../auth.js'));
 // console.log(path.join(__dirname, '../client/dist/'));
-const apiUrl = 'https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfp/';
+let apiUrl = 'https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfp/';
+const QAUrl = 'http://3.134.109.207/';
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/dist/')));
 
 // add token to requests
 app.get('/api/*', (req, res) => {
-  console.log('get api: ');
-  console.log(req.originalUrl);
-  const postfix = req.originalUrl.replace('/api/', '');
+  // console.log('get api: ');
+  // console.log(req.originalUrl);
+  let postfix = req.originalUrl.replace('/api/', '');
+  let prefix = apiUrl;
+
+  if (req.originalUrl.indexOf('questions') !== -1) {
+    prefix = QAUrl;
+    postfix = req.originalUrl.replace('/api/qa/', '');
+  }
+
   axios({
     method: 'get',
-    url: apiUrl + postfix,
+    url: prefix + postfix,
     headers: {'Authorization': key, 'Accept-encoding': 'gzip, deflate'},
     data: req.body,
   }).then((results) => {
-    //console.log(results.data);
+    // console.log(results.data);
     res.json((results.data));
   }).catch((error) => {
     res.status(error.response.status);
@@ -36,10 +44,20 @@ app.post('/api/*', (req, res) => {
   console.log('post api: ');
   console.log(req.originalUrl);
   console.log(req.body);
-  const postfix = req.originalUrl.replace('/api/', '');
+  let postfix = req.originalUrl.replace('/api/', '');
+  let prefix = apiUrl;
+  if (req.originalUrl.indexOf('questions') !== -1) {
+    prefix = QAUrl;
+    if(postfix.indexOf('answers') !== -1) {
+      postfix = `answers`;
+    } else {
+      postfix = req.originalUrl.replace('/api/qa/', '');
+    }
+    console.log(prefix + postfix);
+  }
   axios({
     method: 'post',
-    url: apiUrl + postfix,
+    url: prefix + postfix,
     headers: {'Authorization': key},
     data: req.body,
   }).then((results) => {
@@ -57,10 +75,22 @@ app.post('/api/*', (req, res) => {
 app.put('/api/*', (req, res) => {
   console.log('put api: ');
   console.log(req.originalUrl);
-  const postfix = req.originalUrl.replace('/api/', '');
+  console.log(req.body);
+  let postfix = req.originalUrl.replace('/api/', '');
+  let prefix = apiUrl;
+  if (req.originalUrl.indexOf('questions') !== -1) {
+    prefix = QAUrl;
+      postfix = 'questions/helpfulness';
+
+    console.log(prefix + postfix);
+  } else if (postfix.indexOf('answers') !== -1) {
+    prefix = QAUrl;
+    postfix = `answers/helpfulness`;
+    console.log(prefix + postfix);
+  }
   axios({
     method: 'put',
-    url: apiUrl + postfix,
+    url: prefix + postfix,
     headers: {'Authorization': key},
     data: req.body,
   }).then((results) => {

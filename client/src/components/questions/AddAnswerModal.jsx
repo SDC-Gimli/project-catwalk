@@ -17,6 +17,7 @@ const AddAnswerModal = ({isOpen, productName, question, setModalState, product_i
 
   const postHandler = function() {
     let obj = {};
+    obj.question_id = question.question_id;
     obj.body = answerBody;
     obj.name = username;
     obj.email = email;

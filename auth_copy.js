@@ -3,7 +3,7 @@
 //confirm that auth.js is added to your gitignore
 //import `key` for use in API requests
 
-let key = YOUR_KEY_HERE
+let key = YOUR_KEY;
 
 export default key
 // replace export default with module.exports for server use
